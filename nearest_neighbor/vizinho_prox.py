@@ -34,16 +34,56 @@ while linha[0] != "EOF":
     linha = arquivo.readline().split()
 
 
+def distance_2d(ponto1, ponto2):
+    """Função que calcula a distância entre 2 pontos euclidianos,
+    retorna qual o ponto de chegada e a distância entre eles"""
+    xd = float(ponto1[1]) - float(ponto2[1])
+    yd = float(ponto1[2]) - float(ponto2[2])
+    dist = round((xd**2 + yd**2) ** 0.5)
+    return ponto2[0], dist
+
+
 # Definindo as funções que calcula as distâncias
 def euclidean_distance(tipo, nodes):
-    """Faz o cálculo da distancia euclidiana, seja 2D ou 3D"""
-    visitados = [nodes[0]]
-    nao_visitados = [nodes[1:]]
-    return visitados, nao_visitados
-    # if tipo == "EUC_2":
-    #     pass
-    # else:
-    #     pass
+    """Faz o cálculo da distancia euclidiana, seja 2D ou 3D,
+    e retorna a soma dos caminhos"""
+    visitados = [nodes[0]]  # Definindo o ponto inicial (temporário)
+    nao_visitados = nodes[1:]  # Listando o restante dos pontos (temporário)
+    # Lista que guarda keys e as distancias percorridas
+    lista_distancias = [(nodes[0][0], 0)]
+
+    # Loop que só para quando todos os pontos forem percorridos
+    while nao_visitados != []:
+        # Lista temporária das distâncias entre o ponto de partida e todos os não percorridos
+        lista_pontos = {}
+        for x in nao_visitados:
+            # Chamando a função corresponde ao tipo com o inicial e a iteração do for
+            # INCOMPLETO - Falta adicionar a condição da chamada da função com base no tipo
+            distancia = distance_2d(visitados[-1], x)
+
+            # Guardando tds distancias temporariamente
+            lista_pontos[distancia[0]] = distancia[1]
+
+        # Após todas as distâncias serem calculadas escolhe a menor
+        menor_distancia = min(lista_pontos.values())
+        # Encontrando a chave correspondente ao menor valor
+        chave_da_menor = [
+            x for x, valor in lista_pontos.items() if valor == menor_distancia
+        ]
+        # Coloca na lista de distâncias o ponto de chegada e a distância para ele
+        lista_distancias += [(chave_da_menor[0], menor_distancia)]
+
+        # Adiciona na lista de visitados o ponto que possui a chave correspondente a menor
+        visitados += [x for x in nao_visitados if x[0] == chave_da_menor[0]]
+        # Remove da lista de nao visitados o ponto que possui menor caminho
+        nao_visitados = [x for x in nao_visitados if x[0] != chave_da_menor[0]]
+
+    # Função de somatório para descobrir o caminho total
+    soma_caminhos = 0
+    for x in lista_distancias:
+        soma_caminhos += x[1]
+
+    return soma_caminhos
 
 
 # Verificar e chamar a função de calculo da distância correspondente ao tipo
@@ -63,6 +103,4 @@ elif tipo_de_pontos in ("XRAY2", "XRAY3"):
     pass
 
 print(saida)
-
 print(tipo_de_pontos)
-print(pontos[0][1])
