@@ -163,4 +163,4 @@ cython_debug/
 
 
 #TSP Files
-.tsp
+*.tsp
