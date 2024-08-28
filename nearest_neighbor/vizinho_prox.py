@@ -1,4 +1,6 @@
-arquivo = open("PISI2-flyfood/nearest_neighbor/mapa.txt", encoding="utf-8")
+from math import cos, acos
+
+arquivo = open("nearest_neighbor/mapa.txt", encoding="utf-8")
 linha = arquivo.readline().split()
 # Listando as palavras chaves que indicam inicio de fornecimento de dados
 keywords = [
@@ -43,9 +45,53 @@ def distance_2d(ponto1, ponto2):
     return ponto2[0], dist
 
 
+def distance_3d(ponto1, ponto2):
+    """Função que calcula a distância entre 3 pontos euclidianos,
+    retorna qual o ponto de chegada e a distância entre eles"""
+    xd = float(ponto1[1]) - float(ponto2[1])
+    yd = float(ponto1[2]) - float(ponto2[2])
+    zd = float(ponto1[3]) - float(ponto2[3])
+    dist = round((xd**2 + yd**2 + zd**2) ** 0.5)
+    return ponto2[0], dist
+
+
+def converter_lat_long(ponto1):
+    """Função que dado uma tupla com (chave, grau e minuto)
+    retorna a latitude e longitudes que é necessário para função
+    de distancia entre pontos geograficos"""
+    PI = 3.141592
+    grau = round(float(ponto1[1]))
+    minu = float(ponto1[1]) - grau
+    latitude = PI * (grau + 5.0 * minu / 3.0) / 180.0
+    grau = round(float(ponto1[2]))
+    minu = float(ponto1[2]) - grau
+    longitude = PI * (grau + 5.0 * minu / 3.0) / 180.0
+    return latitude, longitude
+
+
+def distance_geo(ponto1, ponto2):
+    """Função que recebe duas tuplas (chave, grau e minuto),
+    chama a função de conversão com latitude e longitude e
+    faz uma nova tupla substituindo grau e minuto respectivamente,
+    retorna a chave correspondente ao ponto de chegada e sua distância
+    """
+    temp = converter_lat_long(ponto1)
+    ponto1_convertido = (ponto1[0], temp[0], temp[1])
+    temp = converter_lat_long(ponto2)
+    ponto2_convertido = (ponto2[0], temp[0], temp[1])
+
+    RRR = 6378.388
+    q1 = cos(ponto1_convertido[2] - ponto2_convertido[2])
+    q2 = cos(ponto1_convertido[1] - ponto2_convertido[1])
+    q3 = cos(ponto1_convertido[1] + ponto2_convertido[1])
+    dist = RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0
+    return ponto2_convertido[0], int(dist)
+
+
 # Definindo as funções que calcula as distâncias
-def euclidean_distance(tipo, nodes):
-    """Faz o cálculo da distancia euclidiana, seja 2D ou 3D,
+def calcular_distancia(tipo, nodes):
+    """Faz o cálculo da distancia referente ao tipo, recebe uma string e lista de tuplas,
+    as tuplas correspondem a chave e valores,
     e retorna a soma dos caminhos"""
     visitados = [nodes[0]]  # Definindo o ponto inicial (temporário)
     nao_visitados = nodes[1:]  # Listando o restante dos pontos (temporário)
@@ -58,9 +104,22 @@ def euclidean_distance(tipo, nodes):
         lista_pontos = {}
         for x in nao_visitados:
             # Chamando a função corresponde ao tipo com o inicial e a iteração do for
-            # INCOMPLETO - Falta adicionar a condição da chamada da função com base no tipo
-            distancia = distance_2d(visitados[-1], x)
-
+            if tipo == "EUC_2D":
+                distancia = distance_2d(visitados[-1], x)
+            elif tipo == "EUC_3D":
+                distancia = distance_3d(visitados[-1], x)
+            elif tipo == "GEO":
+                distancia = distance_geo(visitados[-1], x)
+            elif tipo_de_pontos in ("MAN_2D", "MAN_3"):
+                pass
+            elif tipo_de_pontos in ("MAX_2D", "MAX_3"):
+                pass
+            elif tipo_de_pontos == "ATT":
+                pass
+            elif tipo_de_pontos == "CEIL_2D":
+                pass
+            elif tipo_de_pontos in ("XRAY2", "XRAY3"):
+                pass
             # Guardando tds distancias temporariamente
             lista_pontos[distancia[0]] = distancia[1]
 
@@ -86,21 +145,9 @@ def euclidean_distance(tipo, nodes):
     return soma_caminhos
 
 
-# Verificar e chamar a função de calculo da distância correspondente ao tipo
-if tipo_de_pontos in ("EUC_2D", "EUC_3"):
-    saida = euclidean_distance(tipo_de_pontos, pontos)
-elif tipo_de_pontos in ("MAN_2D", "MAN_3"):
-    pass
-elif tipo_de_pontos in ("MAX_2D", "MAX_3"):
-    pass
-elif tipo_de_pontos == "GEO":
-    pass
-elif tipo_de_pontos == "ATT":
-    pass
-elif tipo_de_pontos == "CEIL_2D":
-    pass
-elif tipo_de_pontos in ("XRAY2", "XRAY3"):
-    pass
+# Chamada que vai passar uma string com tipo de pontos e uma lista de tuplas
+saida = calcular_distancia(tipo_de_pontos, pontos)
+
 
 print(saida)
 print(tipo_de_pontos)
