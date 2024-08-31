@@ -120,35 +120,35 @@ def calcular_distancia(tipo, nodes):
 
 
 # FUNÇÃO COM CÓDIGO MAIN
-def main():
+def run():
     """Função que vai executar todo o código"""
 
-    arquivo = open("nearest_neighbor/mapa.txt", encoding="utf-8")
-    linha = arquivo.readline().split()
-    # Listando as palavras chaves que indicam inicio de fornecimento de dados
-    keywords = [
-        "NODE_COORD_SECTION",
-        "DEPOT_SECTION",
-        "DEMAND_SECTION",
-        "EDGE_DATA_SECTION",
-        "FIXED_EDGES_SECTION",
-        "DISPLAY DATA SECTION ",
-        "TOUR_SECTION",
-        "EDGE_WEIGHT_SECTION",
-    ]
-    # Verificando qual o tipo de ponto que será dado até chegar na sessão de dados
-    tipo_de_pontos = None
-    while linha[0] not in keywords:
-        if linha[0] == "EDGE_WEIGHT_TYPE:":
-            tipo_de_pontos = linha[1]
+    with open("mapa.txt", encoding="utf-8") as arquivo:
         linha = arquivo.readline().split()
+        # Listando as palavras chaves que indicam inicio de fornecimento de dados
+        keywords = [
+            "NODE_COORD_SECTION",
+            "DEPOT_SECTION",
+            "DEMAND_SECTION",
+            "EDGE_DATA_SECTION",
+            "FIXED_EDGES_SECTION",
+            "DISPLAY_DATA_SECTION",
+            "TOUR_SECTION",
+            "EDGE_WEIGHT_SECTION",
+        ]
+        # Verificando qual o tipo de ponto que será dado até chegar na sessão de dados
+        tipo_de_pontos = None
+        while linha[0] not in keywords:
+            if linha[0] == "EDGE_WEIGHT_TYPE:" or linha[0] == "EDGE_WEIGHT_TYPE":
+                tipo_de_pontos = linha[-1]
+            linha = arquivo.readline().split()
 
-    # Guardando todas as linhas de dados em formato de tupla(por enquanto)
-    pontos = []
-    linha = arquivo.readline().split()
-    while linha[0] != "EOF":
-        pontos += [tuple(linha)]
+        # Guardando todas as linhas de dados em formato de tupla(por enquanto)
+        pontos = []
         linha = arquivo.readline().split()
+        while linha[0] != "EOF":
+            pontos += [tuple(linha)]
+            linha = arquivo.readline().split()
 
     # Chamada que vai passar uma string com tipo de pontos e uma lista de tuplas
     chave_e_distancia = calcular_distancia(tipo_de_pontos, pontos)
@@ -159,5 +159,5 @@ def main():
     print(saida)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#    run()
