@@ -51,7 +51,7 @@ def gerar_caminho(dict_coordenadas, lista_pontos, qtde_pontos):
         elif contador_pontos == qtde_pontos: # se for a última vez
             lista_n_visitados = []
             dist_atual = calcular_distancia_euc2d(dict_coordenadas[str(ponto_anterior)], dict_coordenadas[str(ponto_aleatorio)])
-            menor_caminho += [ponto_aleatorio] # add o ponto aleatorio no final do caminho
+            menor_caminho += [str(ponto_aleatorio)] # add o ponto aleatorio no final do caminho
 
             # adiciona na lista de coordenadas o indice, e as coordenadas. Ex.: ('1', 123.1, 456.2)
             lista_coord += [tuple([str(ponto_aleatorio), dict_coordenadas[str(ponto_aleatorio)][0], dict_coordenadas[str(ponto_aleatorio)][1]])]
@@ -82,7 +82,7 @@ def gerar_caminho(dict_coordenadas, lista_pontos, qtde_pontos):
         menor_distancia += menor_dist_temp
         contador_pontos+=1
 
-def principal():
+def run():
     """Função principal que executa o código"""
     with open("nearest_neighbor/mapa.txt", 'r', encoding="utf-8") as arquivo:
         linhas_temp = arquivo.read().splitlines() # lê todas as linhas e as separa em uma lista
@@ -106,4 +106,4 @@ def principal():
     return lista_coord # retorna para poder utilizar na plot_map
 
 if __name__ == "__main__":
-    principal()
+    run()
