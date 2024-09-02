@@ -27,15 +27,17 @@ def somatorio_dist(lista):
 
 def calcular_distancia(tipo, nodes):
     """Faz o cálculo da distancia referente ao tipo, recebe uma string e lista de tuplas,
-    as tuplas correspondem a chave e valores,
+    as tuplas correspondem a chave e coordenadas,
     e retorna uma lista com tuplas(CHAVE, DISTANCIA) que vão guardar chaves
     que indicam os pontos, e a distância é do ponto anterior até o atual"""
 
-    visitados = [choice(nodes)]  # Definindo o ponto inicial
-    nao_visitados = [
-        x for x in nodes if x[0] != visitados[0][0]
-    ]  # Listando o restante dos pontos
-    # Lista que guarda keys e as distancias percorridas
+    # Definindo o ponto inicial
+    visitados = [choice(nodes)]
+
+    # Listando o restante dos pontos
+    nao_visitados = [x for x in nodes if x[0] != visitados[0][0]]
+
+    # Lista que guarda chaves e as distancias percorridas
     lista_distancias = []
 
     # Loop que só para quando todos os pontos forem percorridos
@@ -64,7 +66,7 @@ def calcular_distancia(tipo, nodes):
         # Remove da lista de nao visitados o ponto que possui menor caminho
         nao_visitados = [x for x in nao_visitados if x[0] != chave_da_menor[0]]
 
-    # Distancia do ponto final para o inicial(TEMPORÁRIO)
+    # Distancia do ponto final para o inicial
     dis_ate_inicio = distance_2d(visitados[-1], visitados[0])
     lista_distancias += [dis_ate_inicio[1]]
 
@@ -101,11 +103,8 @@ def run():
     # A primeira lista se refere distancias
     # A segunda lista se refere a chaves e coordenadas
 
-    # Chamada que vai pegar todas a lista de tuplas e somar as distâncias
+    # Chamada que vai pegar todas as distâncias e somar
     saida = somatorio_dist(duas_listas[0])
-
-    # print(duas_listas[1])
-    # print(saida)
 
     return duas_listas[1], saida
 
