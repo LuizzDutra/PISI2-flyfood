@@ -68,7 +68,7 @@ def start(nodes: Dict[int, List[int]]):
     new_population_fit = [int]*POPULATION_SIZE
 
     all_time_best_fit = 0
-    all_time_best_route = [List[int]]*POPULATION_SIZE
+    all_time_best_route = [List[int]]
 
     #fitness initialization
     for i, lone in enumerate(population):
