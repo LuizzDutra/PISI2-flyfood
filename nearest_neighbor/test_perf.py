@@ -47,9 +47,8 @@ def main():
         media += distancia[1]
 
     # Calcula a média geral de todas as distâncias
-    media = media / it
-    print(f"A média geral foi de : {media}")
-    print(total_time / it)
+    print(f"A média geral das distâncias : {media/it:.2f}")
+    print(f"O tempo em ns : {total_time / it}")
 
 
 if __name__ == "__main__":
