@@ -2,9 +2,10 @@ from typing import List, Dict
 from random import randint, uniform, choices
 from math import dist
 
-POPULATION_SIZE = 1000
-MAX_GEN = 200
-MUTATION_CHANCE = 1
+POPULATION_SIZE = 2000
+MAX_GEN = 300
+MUTATION_CHANCE = 5
+ELITISM = 90
 
 
 def make_random_path(nodes: Dict[int, List[int]]) -> List[int]:
@@ -66,6 +67,9 @@ def start(nodes: Dict[int, List[int]]):
     new_population = [int]*POPULATION_SIZE
     new_population_fit = [int]*POPULATION_SIZE
 
+    all_time_best_fit = 0
+    all_time_best_route = [List[int]]
+
     #fitness initialization
     for i, lone in enumerate(population):
         population_fit[i] = get_fit(lone, nodes)
@@ -86,29 +90,33 @@ def start(nodes: Dict[int, List[int]]):
 
 
             for j in range(2):
-                if offspring_fit[j] > population_fit[i+j]:
-                    new_population[i+j] = offspring[j]
-                    new_population_fit[i+j] = offspring_fit[j]
-                else:
+                if offspring_fit[j] < population_fit[i+j] and uniform(0, 100) <= ELITISM:
                     new_population[i+j] = population[chosen_idx[j]]
                     new_population_fit[i+j] = population_fit[chosen_idx[j]]
+                else:
+                    new_population[i+j] = offspring[j]
+                    new_population_fit[i+j] = offspring_fit[j]
 
         population = new_population
         population_fit = new_population_fit
+        gen_best = max(population_fit)
         print(_)
-        print(1/max(population_fit))
+        print(1/gen_best)
         print()
+        if gen_best > all_time_best_fit:
+            all_time_best_fit = gen_best
+            all_time_best_route = population[population_fit.index(gen_best)]
 
 
     #Resultado final
-    end_idx = -1
-    end_fit = 0
-    for i, lone in enumerate(population):
-        if population_fit[i] > end_fit:
-            end_fit = population_fit[i]
-            end_idx = i
+    #end_idx = -1
+    #end_fit = 0
+    #for i, lone in enumerate(population):
+    #    if population_fit[i] > end_fit:
+    #        end_fit = population_fit[i]
+    #        end_idx = i
 
-    return population[end_idx], 1/end_fit
+    return all_time_best_route, 1/all_time_best_fit
 
 
 if __name__ == '__main__':

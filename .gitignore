@@ -164,3 +164,8 @@ cython_debug/
 
 #TSP Files
 *.tsp
+
+#exe files
+*.exe
+
+.vscode
